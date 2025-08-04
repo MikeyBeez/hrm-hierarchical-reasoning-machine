@@ -2,9 +2,24 @@
 
 🧠 **A Multi-Level AI Reasoning System with MCP Integration**
 
-[![Status](https://img.shields.io/badge/Status-Production%20Ready-green)](https://github.com/your-username/hrm-hierarchical-reasoning-machine)
-[![Completion](https://img.shields.io/badge/Completion-100%25%20Architecture-brightgreen)](https://github.com/your-username/hrm-hierarchical-reasoning-machine)
-[![Platform](https://img.shields.io/badge/Platform-Claude%20App%20%2B%20MCP-blue)](https://github.com/your-username/hrm-hierarchical-reasoning-machine)
+[![Status](https://img.shields.io/badge/Status-Phase%206%20Community-brightgreen)](https://github.com/MikeyBeez/hrm-hierarchical-reasoning-machine)
+[![Completion](https://img.shields.io/badge/Phase%205-85%25%20Complete-green)](https://github.com/MikeyBeez/hrm-hierarchical-reasoning-machine)
+[![Platform](https://img.shields.io/badge/Platform-Claude%20%2B%20MCP-blue)](https://github.com/MikeyBeez/hrm-hierarchical-reasoning-machine)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![CI](https://github.com/MikeyBeez/hrm-hierarchical-reasoning-machine/workflows/HRM%20CI/CD%20Pipeline/badge.svg)](https://github.com/MikeyBeez/hrm-hierarchical-reasoning-machine/actions)
+
+## 🚀 Phase 6: Community & Production Deployment (CURRENT)
+
+**🎉 Now Available: Production-ready HRM framework for global collaboration!**
+
+### 🌍 Phase 6 Features:
+- ✅ **GitHub Repository Published** - Open source collaboration ready
+- ✅ **CI/CD Pipeline** - Automated testing and deployment
+- ✅ **Community Guidelines** - Code of conduct and contribution standards
+- ✅ **Research Paper Ready** - Academic publication preparation
+- 🎯 **Real MCP Integration** - Next: Connect to actual Claude MCP tools
+- 🎯 **Performance Benchmarking** - Compare against other reasoning frameworks
+- 🎯 **Community Onboarding** - Welcome contributors and researchers
 
 ## 🎯 Phase 4 Complete: Production-Ready Automation
 

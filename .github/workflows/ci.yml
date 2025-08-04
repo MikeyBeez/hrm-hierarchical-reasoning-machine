@@ -1,0 +1,149 @@
+name: HRM CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-asyncio
+    
+    - name: Install HRM package
+      run: |
+        pip install -e .
+    
+    - name: Run Phase 4 tests
+      run: |
+        python -m pytest tests/test_phase4.py -v --cov=src --cov-report=xml
+    
+    - name: Run Phase 5 tests
+      run: |
+        python -m pytest tests/test_phase5.py -v --cov=src --cov-report=xml
+    
+    - name: Run core HRM tests
+      run: |
+        python -m pytest tests/ -v --cov=src --cov-report=xml
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  performance-benchmark:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+    
+    - name: Run performance benchmarks
+      run: |
+        # Create benchmark script if it doesn't exist
+        if [ ! -f "benchmark.py" ]; then
+          echo "Creating basic benchmark script..."
+          cat > benchmark.py << 'EOF'
+import time
+import asyncio
+from src.hrm_phase5 import execute_hrm_phase5
+
+async def benchmark_queries():
+    queries = [
+        "What is the capital of France?",  # Simple
+        "Explain the relationship between quantum mechanics and general relativity.",  # Medium
+        "Design a comprehensive AI safety framework for superintelligent systems."  # Complex
+    ]
+    
+    results = []
+    for query in queries:
+        start_time = time.time()
+        result = await execute_hrm_phase5(query)
+        end_time = time.time()
+        
+        results.append({
+            'query': query[:50] + '...' if len(query) > 50 else query,
+            'execution_time': end_time - start_time,
+            'complexity': result.get('complexity', 'unknown'),
+            'pattern': result.get('pattern', 'unknown'),
+            'success': result.get('success', False)
+        })
+    
+    print("🚀 HRM Performance Benchmark Results:")
+    for result in results:
+        print(f"Query: {result['query']}")
+        print(f"  Complexity: {result['complexity']}")
+        print(f"  Pattern: {result['pattern']}")
+        print(f"  Time: {result['execution_time']:.2f}s")
+        print(f"  Success: {result['success']}")
+        print()
+
+if __name__ == "__main__":
+    asyncio.run(benchmark_queries())
+EOF
+        fi
+        python benchmark.py
+
+  documentation:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install documentation dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme
+    
+    - name: Generate documentation
+      run: |
+        # Create docs if they don't exist
+        if [ ! -d "docs/_build" ]; then
+          echo "Documentation build directory not found, creating basic structure..."
+          mkdir -p docs/_build/html
+          echo "<h1>HRM Documentation</h1><p>Documentation generation in progress...</p>" > docs/_build/html/index.html
+          echo "✅ Documentation placeholder created"
+        fi
+    
+    - name: Deploy documentation to GitHub Pages
+      if: github.ref == 'refs/heads/master'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html
